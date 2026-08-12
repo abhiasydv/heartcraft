@@ -97,8 +97,6 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const params = new URLSearchParams(window.location.search);
@@ -109,19 +107,14 @@
                 initDaily(params.get('name'), params.get('title'), params.get('notes'), params.get('time'));
             } else {
                 try {
-                    const { data: gift, error } = await supabase
-                        .from('gifts')
-                        .select('data')
-                        .eq('id', id)
-                        .single();
-                        
-                    if (error) throw error;
-                    if (gift) {
-                        initDaily(gift.data.name, gift.data.title, gift.data.notes, gift.data.time);
-                    }
+                    const response = await fetch('/api/gifts?id=' + id);
+                    if (!response.ok) throw new Error('Gift not found');
+                    
+                    const gift = await response.json();
+                    initDaily(gift.data.name, gift.data.title, gift.data.notes, gift.data.time);
                 } catch (err) {
                     console.error("Error fetching gift:", err);
-                    alert("Could not load the journal. Are your database credentials correct?");
+                    alert("Could not load the journal.");
                 }
             }
 

@@ -19,8 +19,6 @@
 
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const params = new URLSearchParams(window.location.search);
@@ -31,19 +29,14 @@
                 initBirthday(params.get('name'), params.get('age'), params.get('message'));
             } else {
                 try {
-                    const { data: gift, error } = await supabase
-                        .from('gifts')
-                        .select('data')
-                        .eq('id', id)
-                        .single();
-                        
-                    if (error) throw error;
-                    if (gift) {
-                        initBirthday(gift.data.name, gift.data.age, gift.data.message);
-                    }
+                    const response = await fetch('/api/gifts?id=' + id);
+                    if (!response.ok) throw new Error('Gift not found');
+                    
+                    const gift = await response.json();
+                    initBirthday(gift.data.name, gift.data.age, gift.data.message);
                 } catch (err) {
                     console.error("Error fetching gift:", err);
-                    alert("Could not load the birthday card. Are your database credentials correct?");
+                    alert("Could not load the birthday card.");
                 }
             }
 

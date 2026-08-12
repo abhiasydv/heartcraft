@@ -166,8 +166,6 @@
         </div>
     </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
@@ -235,17 +233,22 @@
                 }
                 
                 try {
-                    // Save to Supabase
-                    const { data: result, error } = await supabase
-                        .from('gifts')
-                        .insert([
-                            { template_type: template, data: data }
-                        ])
-                        .select();
-
-                    if (error) throw error;
+                    // Save via our secure Serverless Function
+                    const response = await fetch('/api/gifts', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ template_type: template, data: data })
+                    });
                     
-                    const giftId = result[0].id;
+                    if (!response.ok) {
+                        const errData = await response.json();
+                        throw new Error(errData.error || 'Server error');
+                    }
+                    
+                    const result = await response.json();
+                    const giftId = result.id;
                     
                     // Build short link
                     const url = window.location.origin + window.location.pathname.replace('create.html', '') + targetPage + '?id=' + giftId;
@@ -257,7 +260,7 @@
                     linkEl.textContent = url;
                     resultBox.style.display = 'block';
                 } catch (err) {
-                    alert('Error creating gift! Did you configure Supabase correctly in config.js? Error: ' + err.message);
+                    alert('Error creating gift: ' + err.message);
                 } finally {
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;

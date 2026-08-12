@@ -195,8 +195,6 @@
 
     <!-- Scripts -->
     <script src="script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="config.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const params = new URLSearchParams(window.location.search);
@@ -209,19 +207,14 @@
             }
             
             try {
-                const { data: gift, error } = await supabase
-                    .from('gifts')
-                    .select('data')
-                    .eq('id', id)
-                    .single();
-                    
-                if (error) throw error;
-                if (gift) {
-                    populateData(gift.data.name, gift.data.year, gift.data.message);
-                }
+                const response = await fetch('/api/gifts?id=' + id);
+                if (!response.ok) throw new Error('Gift not found');
+                
+                const gift = await response.json();
+                populateData(gift.data.name, gift.data.year, gift.data.message);
             } catch (err) {
                 console.error("Error fetching gift:", err);
-                alert("Could not load the gift. Are your database credentials correct?");
+                alert("Could not load the gift.");
             }
             
             function populateData(name, year, message) {
