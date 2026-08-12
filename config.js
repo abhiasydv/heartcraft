@@ -1,7 +1,6 @@
 // Supabase Configuration
-// REPLACE THESE WITH YOUR ACTUAL SUPABASE URL AND ANON KEY
-const SUPABASE_URL = 'https://YOUR_PROJECT_REF.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGci...YOUR_ANON_KEY';
+const SUPABASE_URL = 'https://kfuleydvwacseuvcxsgk.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_wzpP91P_XCyHSa0jAlLUyw_CGz26P2w';
 
 // Initialize Supabase Client
 // This requires the Supabase JS library to be included in the HTML file:
