@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Gift – HeartCraft Templates</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .creator-form {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            padding: 3rem;
+            border-radius: 24px;
+            max-width: 600px;
+            margin: 8rem auto 4rem;
+            box-shadow: var(--glass-shadow);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-accent);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.8);
+            transition: var(--transition-smooth);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255,77,109,0.2);
+        }
+        
+        .generated-link {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            border: 2px dashed var(--primary-color);
+            display: none;
+            word-break: break-all;
+        }
+        
+        .generated-link a {
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: underline;
+        }
+        
+        .dynamic-form {
+            display: none;
+        }
+        
+        .dynamic-form.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow">
+        <div class="glow-orb glow-1"></div>
+        <div class="glow-orb glow-2"></div>
+    </div>
+
+    <nav class="navbar scrolled">
+        <a href="index.html" class="nav-brand">HeartCraft</a>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+        </ul>
+    </nav>
+
+    <section>
+        <div class="creator-form fade-in-element">
+            <h2 class="section-title" id="formTitle" style="font-size: 2rem; margin-bottom: 0.5rem;">Create Your Surprise</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Fill in the details to generate a unique link for your loved one.</p>
+            
+            <form id="masterForm">
+                
+                <!-- Journey Template Fields -->
+                <div id="form-journey" class="dynamic-form">
+                    <div class="form-group">
+                        <label class="form-label" for="j_name">Partner's Name</label>
+                        <input type="text" id="j_name" class="form-input" placeholder="e.g. Divya">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="j_year">Year You Met</label>
+                        <input type="text" id="j_year" class="form-input" placeholder="e.g. 2018">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="j_message">Special Message</label>
+                        <textarea id="j_message" class="form-input" rows="4" placeholder="I finally told you what my heart had been carrying..."></textarea>
+                    </div>
+                </div>
+                
+                <!-- Proposal Template Fields -->
+                <div id="form-proposal" class="dynamic-form">
+                    <div class="form-group">
+                        <label class="form-label" for="p_name">Partner's Name</label>
+                        <input type="text" id="p_name" class="form-input" placeholder="e.g. Divya">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="p_question">The Big Question</label>
+                        <input type="text" id="p_question" class="form-input" placeholder="Will you be forever mine?">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="p_message">Celebration Message (After they click Yes)</label>
+                        <textarea id="p_message" class="form-input" rows="4" placeholder="I love you so much!"></textarea>
+                    </div>
+                </div>
+
+                <!-- Birthday Template Fields -->
+                <div id="form-birthday" class="dynamic-form">
+                    <div class="form-group">
+                        <label class="form-label" for="b_name">Birthday Person's Name</label>
+                        <input type="text" id="b_name" class="form-input" placeholder="e.g. John">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="b_age">Age Turning (Optional)</label>
+                        <input type="text" id="b_age" class="form-input" placeholder="e.g. 25">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="b_message">Birthday Wish</label>
+                        <textarea id="b_message" class="form-input" rows="4" placeholder="Wishing you the happiest birthday ever!"></textarea>
+                    </div>
+                </div>
+
+                <!-- Daily Journal Template Fields -->
+                <div id="form-daily" class="dynamic-form">
+                    <div class="form-group">
+                        <label class="form-label" for="d_name">Partner's Name</label>
+                        <input type="text" id="d_name" class="form-input" placeholder="e.g. Divya">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="d_title">Journal Title</label>
+                        <input type="text" id="d_title" class="form-input" placeholder="e.g. A busy day at work">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="d_notes">Your Story / Notes</label>
+                        <textarea id="d_notes" class="form-input" rows="6" placeholder="Write down everything you want to tell them about your day..."></textarea>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">Generate Link ✨</button>
+            </form>
+            
+            <div id="resultBox" class="generated-link">
+                <p style="margin-bottom: 0.5rem; color: var(--dark-accent); font-weight: 600;">Your unique link is ready!</p>
+                <a id="shareableLink" href="#" target="_blank">Click here to view</a>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const template = params.get('template') || 'journey'; // Default to journey
+            
+            // Activate the correct form group
+            const activeForm = document.getElementById('form-' + template);
+            if(activeForm) {
+                activeForm.classList.add('active');
+                
+                // Make fields required for the active form
+                activeForm.querySelectorAll('input, textarea').forEach(el => el.required = true);
+            }
+            
+            // Set title based on template
+            const titleMap = {
+                'journey': 'Create Your Journey Card',
+                'proposal': 'Create The Perfect Proposal',
+                'birthday': 'Create a Birthday Bash',
+                'daily': 'Create a Daily Journal Note'
+            };
+            document.getElementById('formTitle').textContent = titleMap[template] || 'Create Your Surprise';
+            
+            // Form Submit Logic
+            document.getElementById('masterForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Generating...';
+                submitBtn.disabled = true;
+                
+                let targetPage = '';
+                let data = {};
+                
+                if (template === 'journey') {
+                    data = {
+                        name: document.getElementById('j_name').value,
+                        year: document.getElementById('j_year').value,
+                        message: document.getElementById('j_message').value
+                    };
+                    targetPage = 'gift-template.html';
+                } else if (template === 'proposal') {
+                    data = {
+                        name: document.getElementById('p_name').value,
+                        question: document.getElementById('p_question').value,
+                        message: document.getElementById('p_message').value
+                    };
+                    targetPage = 'proposal-template.html';
+                } else if (template === 'birthday') {
+                    data = {
+                        name: document.getElementById('b_name').value,
+                        age: document.getElementById('b_age').value,
+                        message: document.getElementById('b_message').value
+                    };
+                    targetPage = 'birthday-template.html';
+                } else if (template === 'daily') {
+                    data = {
+                        name: document.getElementById('d_name').value,
+                        title: document.getElementById('d_title').value,
+                        notes: document.getElementById('d_notes').value,
+                        time: new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })
+                    };
+                    targetPage = 'daily-template.html';
+                }
+                
+                try {
+                    // Save to Supabase
+                    const { data: result, error } = await supabase
+                        .from('gifts')
+                        .insert([
+                            { template_type: template, data: data }
+                        ])
+                        .select();
+
+                    if (error) throw error;
+                    
+                    const giftId = result[0].id;
+                    
+                    // Build short link
+                    const url = window.location.origin + window.location.pathname.replace('create.html', '') + targetPage + '?id=' + giftId;
+                    
+                    const resultBox = document.getElementById('resultBox');
+                    const linkEl = document.getElementById('shareableLink');
+                    
+                    linkEl.href = url;
+                    linkEl.textContent = url;
+                    resultBox.style.display = 'block';
+                } catch (err) {
+                    alert('Error creating gift! Did you configure Supabase correctly in config.js? Error: ' + err.message);
+                } finally {
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
+
+            // Fade animation
+            setTimeout(() => {
+                document.querySelector('.creator-form').classList.add('visible');
+            }, 100);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="birthday-container" id="container">
+        
+        <div class="birthday-card fade-in-element" id="bdayCard">
+            <h1 class="proposal-question" id="bdayName" style="margin-bottom: 1rem; color: var(--primary-color);">Happy Birthday!</h1>
+            <p id="bdayAge" style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;"></p>
+            <p id="bdayMessage" style="font-size: 1.1rem; line-height: 1.8;">Wishing you all the happiness in the world.</p>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            
+            if (!id) {
+                // Backwards compatibility
+                initBirthday(params.get('name'), params.get('age'), params.get('message'));
+            } else {
+                try {
+                    const { data: gift, error } = await supabase
+                        .from('gifts')
+                        .select('data')
+                        .eq('id', id)
+                        .single();
+                        
+                    if (error) throw error;
+                    if (gift) {
+                        initBirthday(gift.data.name, gift.data.age, gift.data.message);
+                    }
+                } catch (err) {
+                    console.error("Error fetching gift:", err);
+                    alert("Could not load the birthday card. Are your database credentials correct?");
+                }
+            }
+
+            function initBirthday(name, age, message) {
+                name = name || '';
+                age = age || '';
+                message = message || 'Wishing you the best day ever!';
+
+                if(name) {
+                    document.getElementById('bdayName').innerHTML = `Happy Birthday<br/><em>${name}!</em>`;
+                    document.title = `Happy Birthday ${name}!`;
+                }
+                if(age) {
+                    document.getElementById('bdayAge').textContent = `Turning ${age}`;
+                }
+                document.getElementById('bdayMessage').textContent = message;
+
+                setTimeout(() => {
+                    document.getElementById('bdayCard').classList.add('visible');
+                }, 500);
+            }
+
+            // Balloon Generator
+            const container = document.getElementById('container');
+            const colors = ['#ff4d6d', '#ff758f', '#c9184a', '#ffb3c6', '#800f2f', '#a4133c'];
+            
+            function spawnBalloon() {
+                const balloon = document.createElement('div');
+                balloon.classList.add('balloon');
+                
+                // Random properties
+                const size = Math.random() * 40 + 40; // 40px to 80px
+                balloon.style.width = size + 'px';
+                balloon.style.height = (size * 1.25) + 'px';
+                balloon.style.left = Math.random() * 90 + 'vw';
+                balloon.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                balloon.style.animationDuration = (Math.random() * 5 + 8) + 's'; // 8-13s
+                balloon.style.animationDelay = (Math.random() * 2) + 's';
+                
+                // Popping logic
+                balloon.addEventListener('mousedown', () => popBalloon(balloon));
+                balloon.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    popBalloon(balloon);
+                });
+
+                container.appendChild(balloon);
+                
+                // Remove after animation to prevent DOM bloat
+                setTimeout(() => {
+                    if (balloon.parentNode) balloon.remove();
+                }, 15000);
+            }
+
+            function popBalloon(balloon) {
+                balloon.classList.add('pop');
+                setTimeout(() => {
+                    if(balloon.parentNode) balloon.remove();
+                }, 200);
+            }
+
+            // Spawn initial balloons
+            for(let i=0; i<15; i++) {
+                setTimeout(spawnBalloon, i * 300);
+            }
+            
+            // Continuously spawn balloons
+            setInterval(spawnBalloon, 2000);
+        });
+    </script>
+</body>
+</html>

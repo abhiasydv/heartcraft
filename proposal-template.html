@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Perfect Proposal</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .confetti-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow">
+        <div class="glow-orb glow-1"></div>
+        <div class="glow-orb glow-2"></div>
+    </div>
+
+    <div class="proposal-container">
+        <div class="confetti-container" id="confettiContainer"></div>
+        
+        <h1 class="proposal-question fade-in-element" id="questionText">Will you be forever mine?</h1>
+        
+        <div class="proposal-actions fade-in-element" id="actionButtons">
+            <button class="btn btn-primary" id="btnYes" style="font-size: 1.2rem; padding: 1rem 3rem;">Yes</button>
+            <button class="btn btn-secondary btn-dodger" id="btnNo" style="font-size: 1.2rem; padding: 1rem 3rem;">No</button>
+        </div>
+
+        <div class="celebration-message" id="celebrationMessage">
+            <h2 id="finalMessage">I love you!</h2>
+            <p style="font-size: 1.2rem; color: var(--text-muted); font-family: var(--font-sans); margin-top: 1rem;">They said YES! 🎉</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            
+            if (!id) {
+                // Keep backwards compatibility
+                initProposal(params.get('name'), params.get('question'), params.get('message'));
+            } else {
+                try {
+                    const { data: gift, error } = await supabase
+                        .from('gifts')
+                        .select('data')
+                        .eq('id', id)
+                        .single();
+                        
+                    if (error) throw error;
+                    if (gift) {
+                        initProposal(gift.data.name, gift.data.question, gift.data.message);
+                    }
+                } catch (err) {
+                    console.error("Error fetching gift:", err);
+                    alert("Could not load the proposal. Are your database credentials correct?");
+                }
+            }
+
+            function initProposal(name, question, message) {
+                name = name || '';
+                question = question || 'Will you be forever mine?';
+                message = message || 'I knew you would say yes! ❤️';
+
+                document.getElementById('questionText').innerHTML = name ? `${name},<br/>${question}` : question;
+                document.getElementById('finalMessage').innerHTML = message;
+                
+                setTimeout(() => {
+                    document.querySelectorAll('.fade-in-element').forEach(el => el.classList.add('visible'));
+                }, 100);
+            }
+
+            const btnNo = document.getElementById('btnNo');
+            const btnYes = document.getElementById('btnYes');
+            const container = document.querySelector('.proposal-actions');
+
+            // Dodging logic
+            const moveButton = () => {
+                const containerRect = container.getBoundingClientRect();
+                const btnRect = btnNo.getBoundingClientRect();
+                
+                // Calculate random positions within the container or slightly outside
+                const maxX = window.innerWidth - btnRect.width - 40;
+                const maxY = window.innerHeight - btnRect.height - 40;
+                
+                // Random position relative to viewport
+                const randomX = Math.random() * maxX - (window.innerWidth / 2) + (btnRect.width/2);
+                const randomY = (Math.random() * maxY) - (window.innerHeight / 2) + (btnRect.height/2);
+
+                btnNo.style.transform = `translate(${randomX}px, ${randomY}px)`;
+            };
+
+            btnNo.addEventListener('mouseover', moveButton);
+            btnNo.addEventListener('touchstart', (e) => {
+                e.preventDefault(); // Prevent touch click
+                moveButton();
+            });
+            btnNo.addEventListener('click', moveButton);
+
+            // Yes logic
+            btnYes.addEventListener('click', () => {
+                document.getElementById('actionButtons').style.display = 'none';
+                document.getElementById('questionText').style.display = 'none';
+                document.getElementById('celebrationMessage').style.display = 'block';
+                
+                // Confetti explosion
+                createConfetti();
+            });
+
+            function createConfetti() {
+                const container = document.getElementById('confettiContainer');
+                const colors = ['#ff4d6d', '#ff758f', '#c9184a', '#ffb3c6', '#fff'];
+                
+                for(let i=0; i<100; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.classList.add('confetti');
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    confetti.style.animationDelay = (Math.random() * 2) + 's';
+                    
+                    // random shape
+                    if(Math.random() > 0.5) confetti.style.borderRadius = '50%';
+                    
+                    container.appendChild(confetti);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
