@@ -548,4 +548,7 @@ footer {
   0% { transform: translateY(100vh) rotate(-5deg); }
   50% { transform: translateY(50vh) rotate(5deg); }
   100% { transform: translateY(-20vh) rotate(-5deg); }
-}
+}/* Watermark */
+.watermark { position: fixed; bottom: 15px; right: 15px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.4); z-index: 9999; font-family: var(--font-sans); pointer-events: auto; letter-spacing: 0.5px; }
+.watermark a { color: rgba(255, 255, 255, 0.6); text-decoration: none; transition: color 0.3s ease; }
+.watermark a:hover { color: rgba(255, 255, 255, 1); }
