@@ -156,7 +156,24 @@
                     </div>
                 </div>
                 
-                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">Generate Link ✨</button>
+                <!-- Scrapbook Template Fields -->
+                <div id="form-scrapbook" class="dynamic-form">
+                    <div class="form-group">
+                        <label class="form-label" for="s_name">For Who?</label>
+                        <input type="text" id="s_name" class="form-input" placeholder="e.g. Divya">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="s_caption">Polaroid Caption</label>
+                        <input type="text" id="s_caption" class="form-input" placeholder="e.g. Our first date">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="s_image">Upload a Memory (Photo)</label>
+                        <input type="file" id="s_image" class="form-input form-file" accept="image/*">
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">Image will be optimized automatically.</p>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary pulse" style="width: 100%; justify-content: center; margin-top: 1rem;">Generate Link ✨</button>
             </form>
             
             <div id="resultBox" class="generated-link">
@@ -185,9 +202,50 @@
                 'journey': 'Create Your Journey Card',
                 'proposal': 'Create The Perfect Proposal',
                 'birthday': 'Create a Birthday Bash',
-                'daily': 'Create a Daily Journal Note'
+                'daily': 'Create a Daily Journal Note',
+                'scrapbook': 'Create a Scrapbook Polaroid'
             };
             document.getElementById('formTitle').textContent = titleMap[template] || 'Create Your Surprise';
+            
+            // Image Compression Utility
+            const compressImage = (file) => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = event => {
+                        const img = new Image();
+                        img.src = event.target.result;
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            // Max width/height to compress to
+                            const MAX_WIDTH = 800;
+                            const MAX_HEIGHT = 800;
+                            let width = img.width;
+                            let height = img.height;
+
+                            if (width > height) {
+                                if (width > MAX_WIDTH) {
+                                    height *= MAX_WIDTH / width;
+                                    width = MAX_WIDTH;
+                                }
+                            } else {
+                                if (height > MAX_HEIGHT) {
+                                    width *= MAX_HEIGHT / height;
+                                    height = MAX_HEIGHT;
+                                }
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, width, height);
+                            // Compress as WebP for tiny size, or JPEG fallback
+                            resolve(canvas.toDataURL('image/jpeg', 0.6)); 
+                        };
+                        img.onerror = error => reject(error);
+                    };
+                    reader.onerror = error => reject(error);
+                });
+            };
             
             // Form Submit Logic
             document.getElementById('masterForm').addEventListener('submit', async function(e) {
@@ -230,9 +288,30 @@
                         time: new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })
                     };
                     targetPage = 'daily-template.html';
+                } else if (template === 'scrapbook') {
+                    const fileInput = document.getElementById('s_image');
+                    let base64Image = '';
+                    if (fileInput.files && fileInput.files[0]) {
+                        try {
+                            submitBtn.textContent = 'Compressing Image...';
+                            base64Image = await compressImage(fileInput.files[0]);
+                        } catch(e) {
+                            alert("Failed to process image.");
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                            return;
+                        }
+                    }
+                    data = {
+                        name: document.getElementById('s_name').value,
+                        caption: document.getElementById('s_caption').value,
+                        image: base64Image
+                    };
+                    targetPage = 'scrapbook-template.html';
                 }
                 
                 try {
+                    submitBtn.textContent = 'Saving...';
                     // Save via our secure Serverless Function
                     const response = await fetch('/api/gifts', {
                         method: 'POST',

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrapbook Memory</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-glow">
+        <div class="glow-orb glow-1"></div>
+        <div class="glow-orb glow-2"></div>
+    </div>
+
+    <div class="gift-container fade-in-element" style="min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem;">
+        
+        <h1 class="gift-title" style="margin-bottom: 2rem; font-size: 2.5rem;" id="sTitle">A Memory For You</h1>
+        
+        <div class="polaroid" id="polaroidCard" style="display: none;">
+            <img id="sImage" src="" alt="Memory">
+            <div class="polaroid-caption" id="sCaption">Caption here</div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            
+            if (!id) {
+                alert("Invalid memory link.");
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/gifts?id=' + id);
+                if (!response.ok) throw new Error('Memory not found');
+                
+                const gift = await response.json();
+                
+                if (gift.data.name) {
+                    document.getElementById('sTitle').textContent = `For ${gift.data.name}`;
+                    document.title = `Memory for ${gift.data.name}`;
+                }
+                
+                if (gift.data.image) {
+                    document.getElementById('sImage').src = gift.data.image;
+                } else {
+                    document.getElementById('sImage').alt = "No image provided.";
+                }
+                
+                document.getElementById('sCaption').textContent = gift.data.caption || 'A beautiful memory';
+                
+                // Show with animation
+                setTimeout(() => {
+                    document.getElementById('polaroidCard').style.display = 'block';
+                    document.getElementById('polaroidCard').classList.add('fade-in-element');
+                    document.getElementById('polaroidCard').classList.add('visible');
+                }, 200);
+
+            } catch (err) {
+                console.error("Error fetching gift:", err);
+                alert("Could not load the memory.");
+            }
+        });
+    </script>
+<div class="watermark">Created by <a href="https://github.com/abhiasydv" target="_blank">@abhiasydv</a></div></body>
+</html>
