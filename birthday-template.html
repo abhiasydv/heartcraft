@@ -12,6 +12,9 @@
     <div class="birthday-container" id="container">
         
         <div class="birthday-card fade-in-element" id="bdayCard">
+            <div id="dynamicImageContainer" class="template-image-container" style="display: none; max-width: 250px; margin: 0 auto 1.5rem auto; border-radius: 50%; aspect-ratio: 1/1; box-shadow: 0 10px 30px rgba(255, 77, 109, 0.15); border: 4px solid white;">
+                <img id="dynamicImage" src="" alt="Birthday Image" style="aspect-ratio: 1/1; height: 100%;">
+            </div>
             <h1 class="proposal-question" id="bdayName" style="margin-bottom: 1rem; color: var(--primary-color);">Happy Birthday!</h1>
             <p id="bdayAge" style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px;"></p>
             <p id="bdayMessage" style="font-size: 1.1rem; line-height: 1.8;">Wishing you all the happiness in the world.</p>
@@ -33,14 +36,14 @@
                     if (!response.ok) throw new Error('Gift not found');
                     
                     const gift = await response.json();
-                    initBirthday(gift.data.name, gift.data.age, gift.data.message);
+                    initBirthday(gift.data.name, gift.data.age, gift.data.message, gift.data.image);
                 } catch (err) {
                     console.error("Error fetching gift:", err);
                     alert("Could not load the birthday card.");
                 }
             }
 
-            function initBirthday(name, age, message) {
+            function initBirthday(name, age, message, image) {
                 name = name || '';
                 age = age || '';
                 message = message || 'Wishing you the best day ever!';
@@ -53,6 +56,10 @@
                     document.getElementById('bdayAge').textContent = `Turning ${age}`;
                 }
                 document.getElementById('bdayMessage').textContent = message;
+                if(image) {
+                    document.getElementById('dynamicImage').src = image;
+                    document.getElementById('dynamicImageContainer').style.display = 'block';
+                }
 
                 setTimeout(() => {
                     document.getElementById('bdayCard').classList.add('visible');

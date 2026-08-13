@@ -47,6 +47,10 @@
             <h2 class="section-title">Our Story</h2>
         </div>
 
+        <div id="dynamicImageContainer" class="template-image-container" style="display: none;">
+            <img id="dynamicImage" src="" alt="A memory of us">
+        </div>
+
         <div class="bento-grid">
             <!-- Timeline Item 1 -->
             <div class="bento-card fade-in-element">
@@ -211,13 +215,13 @@
                 if (!response.ok) throw new Error('Gift not found');
                 
                 const gift = await response.json();
-                populateData(gift.data.name, gift.data.year, gift.data.message);
+                populateData(gift.data.name, gift.data.year, gift.data.message, gift.data.image);
             } catch (err) {
                 console.error("Error fetching gift:", err);
                 alert("Could not load the gift.");
             }
             
-            function populateData(name, year, message) {
+            function populateData(name, year, message, image) {
                 if (name) {
                     document.getElementById('navBrand').textContent = "For " + name;
                     document.getElementById('dynamicOverline').textContent = "For " + name + " 🌹";
@@ -229,6 +233,10 @@
                 }
                 if (message) {
                     document.getElementById('dynamicMessage').textContent = message;
+                }
+                if (image) {
+                    document.getElementById('dynamicImage').src = image;
+                    document.getElementById('dynamicImageContainer').style.display = 'block';
                 }
             }
         });

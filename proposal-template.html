@@ -29,6 +29,10 @@
     <div class="proposal-container">
         <div class="confetti-container" id="confettiContainer"></div>
         
+        <div id="dynamicImageContainer" class="template-image-container fade-in-element" style="display: none; max-width: 350px; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border: 8px solid white;">
+            <img id="dynamicImage" src="" alt="A memory of us">
+        </div>
+        
         <h1 class="proposal-question fade-in-element" id="questionText">Will you be forever mine?</h1>
         
         <div class="proposal-actions fade-in-element" id="actionButtons">
@@ -56,20 +60,27 @@
                     if (!response.ok) throw new Error('Gift not found');
                     
                     const gift = await response.json();
-                    initProposal(gift.data.name, gift.data.question, gift.data.message);
+                    initProposal(gift.data.name, gift.data.question, gift.data.message, gift.data.image);
                 } catch (err) {
                     console.error("Error fetching gift:", err);
                     alert("Could not load the proposal.");
                 }
             }
 
-            function initProposal(name, question, message) {
-                name = name || '';
-                question = question || 'Will you be forever mine?';
-                message = message || 'I knew you would say yes! ❤️';
-
-                document.getElementById('questionText').innerHTML = name ? `${name},<br/>${question}` : question;
-                document.getElementById('finalMessage').innerHTML = message;
+            function initProposal(name, question, message, image) {
+                if(name) {
+                    document.title = `A Proposal for ${name}`;
+                }
+                if(question) {
+                    document.getElementById('questionText').textContent = question;
+                }
+                if(message) {
+                    document.getElementById('finalMessage').textContent = message;
+                }
+                if(image) {
+                    document.getElementById('dynamicImage').src = image;
+                    document.getElementById('dynamicImageContainer').style.display = 'block';
+                }
                 
                 setTimeout(() => {
                     document.querySelectorAll('.fade-in-element').forEach(el => el.classList.add('visible'));

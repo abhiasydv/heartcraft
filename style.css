@@ -4,11 +4,11 @@
   --dark-accent: #800f2f;
   --bg-color: #fff0f3;
   --surface-color: #ffffff;
-  --text-main: #2b2b2b;
-  --text-muted: #6c757d;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.5);
-  --glass-shadow: 0 8px 32px rgba(255, 77, 109, 0.1);
+  --text-main: #1a1a1a;
+  --text-muted: #5a6268;
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --glass-shadow: 0 12px 40px rgba(255, 77, 109, 0.08);
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-serif: 'Playfair Display', serif;
   --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -620,4 +620,34 @@ footer {
   right: 0;
   font-style: italic;
   font-weight: bold;
+}
+
+/* Template Image Styles */
+.template-image-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 2rem auto;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: slideFadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 0.3s;
+}
+
+.template-image-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.template-image-container:hover img {
+  transform: scale(1.05);
+}
+
+@keyframes slideFadeUp {
+  to { opacity: 1; transform: translateY(0); }
 }

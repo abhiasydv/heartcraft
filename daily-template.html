@@ -81,10 +81,15 @@
     </div>
 
     <div class="daily-container">
-        <div class="journal-card fade-in-element" id="journalCard">
+        <div class="journal-card fade-in-element" id="journalCard" style="opacity: 0; transform: translateY(20px); transition: all 0.6s ease;">
             <div class="journal-header">
-                <p class="journal-for" id="dFor">For You</p>
-                <h1 class="journal-title" id="dTitle">My Day</h1>
+                <div class="journal-for" id="dFor">A Note For You</div>
+                <h1 class="journal-title" id="dTitle">A note from my day</h1>
+                
+                <div id="dynamicImageContainer" class="template-image-container" style="display: none; margin-top: 1.5rem; margin-bottom: 0;">
+                    <img id="dynamicImage" src="" alt="A memory of my day">
+                </div>
+                
                 <div class="journal-meta">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                     <span id="dTime">Today</span>
@@ -111,14 +116,14 @@
                     if (!response.ok) throw new Error('Gift not found');
                     
                     const gift = await response.json();
-                    initDaily(gift.data.name, gift.data.title, gift.data.notes, gift.data.time);
+                    initDaily(gift.data.name, gift.data.title, gift.data.notes, gift.data.time, gift.data.image);
                 } catch (err) {
                     console.error("Error fetching gift:", err);
                     alert("Could not load the journal.");
                 }
             }
 
-            function initDaily(name, title, notes, time) {
+            function initDaily(name, title, notes, time, image) {
                 name = name || '';
                 title = title || 'A note from my day';
                 notes = notes || 'Just thinking about you.';
@@ -132,6 +137,10 @@
                 document.getElementById('dTitle').textContent = title;
                 document.getElementById('dTime').textContent = time;
                 document.getElementById('dNotes').textContent = notes;
+                if(image) {
+                    document.getElementById('dynamicImage').src = image;
+                    document.getElementById('dynamicImageContainer').style.display = 'block';
+                }
 
                 // Fade in animation
                 setTimeout(() => {

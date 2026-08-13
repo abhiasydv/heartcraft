@@ -106,6 +106,10 @@
                         <label class="form-label" for="j_message">Special Message</label>
                         <textarea id="j_message" class="form-input" rows="4" placeholder="I finally told you what my heart had been carrying..."></textarea>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label" for="j_image">Add a Photo (Optional)</label>
+                        <input type="file" id="j_image" class="form-input form-file" accept="image/*">
+                    </div>
                 </div>
                 
                 <!-- Proposal Template Fields -->
@@ -121,6 +125,10 @@
                     <div class="form-group">
                         <label class="form-label" for="p_message">Celebration Message (After they click Yes)</label>
                         <textarea id="p_message" class="form-input" rows="4" placeholder="I love you so much!"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="p_image">Add a Photo (Optional)</label>
+                        <input type="file" id="p_image" class="form-input form-file" accept="image/*">
                     </div>
                 </div>
 
@@ -138,6 +146,10 @@
                         <label class="form-label" for="b_message">Birthday Wish</label>
                         <textarea id="b_message" class="form-input" rows="4" placeholder="Wishing you the happiest birthday ever!"></textarea>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label" for="b_image">Add a Photo (Optional)</label>
+                        <input type="file" id="b_image" class="form-input form-file" accept="image/*">
+                    </div>
                 </div>
 
                 <!-- Daily Journal Template Fields -->
@@ -153,6 +165,10 @@
                     <div class="form-group">
                         <label class="form-label" for="d_notes">Your Story / Notes</label>
                         <textarea id="d_notes" class="form-input" rows="6" placeholder="Write down everything you want to tell them about your day..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="d_image">Add a Photo (Optional)</label>
+                        <input type="file" id="d_image" class="form-input form-file" accept="image/*">
                     </div>
                 </div>
                 
@@ -193,8 +209,8 @@
             if(activeForm) {
                 activeForm.classList.add('active');
                 
-                // Make fields required for the active form
-                activeForm.querySelectorAll('input, textarea').forEach(el => el.required = true);
+                // Make fields required for the active form (except file inputs)
+                activeForm.querySelectorAll('input:not([type="file"]), textarea').forEach(el => el.required = true);
             }
             
             // Set title based on template
@@ -259,25 +275,46 @@
                 let targetPage = '';
                 let data = {};
                 
+                // Generic image compression logic for all templates
+                let prefix = template.charAt(0);
+                if (template === 'scrapbook') prefix = 's';
+                const fileInput = document.getElementById(prefix + '_image');
+                let base64Image = '';
+                
+                if (fileInput && fileInput.files && fileInput.files[0]) {
+                    try {
+                        submitBtn.textContent = 'Compressing Image...';
+                        base64Image = await compressImage(fileInput.files[0]);
+                    } catch(e) {
+                        alert("Failed to process image.");
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        return;
+                    }
+                }
+                
                 if (template === 'journey') {
                     data = {
                         name: document.getElementById('j_name').value,
                         year: document.getElementById('j_year').value,
-                        message: document.getElementById('j_message').value
+                        message: document.getElementById('j_message').value,
+                        image: base64Image
                     };
                     targetPage = 'gift-template.html';
                 } else if (template === 'proposal') {
                     data = {
                         name: document.getElementById('p_name').value,
                         question: document.getElementById('p_question').value,
-                        message: document.getElementById('p_message').value
+                        message: document.getElementById('p_message').value,
+                        image: base64Image
                     };
                     targetPage = 'proposal-template.html';
                 } else if (template === 'birthday') {
                     data = {
                         name: document.getElementById('b_name').value,
                         age: document.getElementById('b_age').value,
-                        message: document.getElementById('b_message').value
+                        message: document.getElementById('b_message').value,
+                        image: base64Image
                     };
                     targetPage = 'birthday-template.html';
                 } else if (template === 'daily') {
@@ -285,23 +322,11 @@
                         name: document.getElementById('d_name').value,
                         title: document.getElementById('d_title').value,
                         notes: document.getElementById('d_notes').value,
-                        time: new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' })
+                        time: new Date().toLocaleString('en-US', { dateStyle: 'full', timeStyle: 'short' }),
+                        image: base64Image
                     };
                     targetPage = 'daily-template.html';
                 } else if (template === 'scrapbook') {
-                    const fileInput = document.getElementById('s_image');
-                    let base64Image = '';
-                    if (fileInput.files && fileInput.files[0]) {
-                        try {
-                            submitBtn.textContent = 'Compressing Image...';
-                            base64Image = await compressImage(fileInput.files[0]);
-                        } catch(e) {
-                            alert("Failed to process image.");
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
-                            return;
-                        }
-                    }
                     data = {
                         name: document.getElementById('s_name').value,
                         caption: document.getElementById('s_caption').value,
